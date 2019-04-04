@@ -3,15 +3,13 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .conf import LOGIN_TYPE_MA, LOGIN_TYPE_XBL, config
-from .models import MicrosoftAccount, XboxLiveAccount
+from .conf import LOGIN_TYPE_MA, config
+from .models import MicrosoftAccount
 
 __all__ = [
     "MicrosoftAccountAdmin",
     "MicrosoftAccountInlineAdmin",
     "UserAdmin",
-    "XboxLiveAccountAdmin",
-    "XboxLiveAccountInlineAdmin",
 ]
 
 User = get_user_model()
@@ -42,16 +40,6 @@ class MicrosoftAccountInlineAdmin(admin.StackedInline):
     model = MicrosoftAccount
     readonly_fields = ("microsoft_id",)
 
-
-class XboxLiveAccountAdmin(*base_admin):
-    readonly_fields = ("xbox_id", "gamertag")
-
-
-class XboxLiveAccountInlineAdmin(admin.StackedInline):
-    model = XboxLiveAccount
-    readonly_fields = ("xbox_id", "gamertag")
-
-
 def _register_admins():
     _do_both = config.MICROSOFT_AUTH_REGISTER_INACTIVE_ADMIN
     _login_type = config.MICROSOFT_AUTH_LOGIN_TYPE
@@ -59,13 +47,8 @@ def _register_admins():
     if admin.site.is_registered(MicrosoftAccount):
         admin.site.unregister(MicrosoftAccount)
 
-    if admin.site.is_registered(XboxLiveAccount):
-        admin.site.unregister(XboxLiveAccount)
-
     if _do_both or _login_type == LOGIN_TYPE_MA:
         admin.site.register(MicrosoftAccount, MicrosoftAccountAdmin)
-    if _do_both or _login_type == LOGIN_TYPE_XBL:
-        admin.site.register(XboxLiveAccount, XboxLiveAccountAdmin)
 
 
 def _get_inlines():
@@ -75,8 +58,6 @@ def _get_inlines():
 
     if _do_both or _login_type == LOGIN_TYPE_MA:
         inlines.append(MicrosoftAccountInlineAdmin)
-    if _do_both or _login_type == LOGIN_TYPE_XBL:
-        inlines.append(XboxLiveAccountInlineAdmin)
 
     return inlines
 
@@ -85,7 +66,7 @@ def _get_inlines():
 class UserAdmin(*base_user_admin):
     @property
     def inlines(self):
-        """ Adds MicrosoftAccount and/or XboxLiveAccount foreign keys to
+        """ Adds MicrosoftAccount foreign keys to
         User model """
 
         return _get_inlines()

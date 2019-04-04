@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from .client import MicrosoftClient
-from .conf import LOGIN_TYPE_XBL, config
+from .conf import config
 from .utils import get_scheme
 
 logger = logging.getLogger("django")
@@ -15,11 +15,7 @@ logger = logging.getLogger("django")
 
 def microsoft(request):
     """ Adds global template variables for microsoft_auth """
-    login_type = None
-    if config.MICROSOFT_AUTH_LOGIN_TYPE == LOGIN_TYPE_XBL:
-        login_type = _("Xbox Live")
-    else:
-        login_type = _("Microsoft")
+    login_type = _("Microsoft")
 
     if config.DEBUG:  # pragma: no branch
         try:

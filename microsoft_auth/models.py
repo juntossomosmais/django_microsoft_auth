@@ -31,17 +31,3 @@ class MicrosoftAccount(models.Model):
 
     def __str__(self):
         return self.microsoft_id
-
-
-class XboxLiveAccount(models.Model):
-    xbox_id = models.CharField(_("xbox user id"), max_length=32, unique=True)
-    gamertag = models.CharField(_("xbox live gamertag"), max_length=16)
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name="xbox_live_account",
-    )
-
-    def __str__(self):
-        return self.gamertag

@@ -19,15 +19,13 @@ settings = None
     CONSTANCE_ADDITIONAL_FIELDS = {
         'microsoft_choices': ['django.forms.fields.ChoiceField', {
             'widget': 'django.forms.Select',
-            'choices': (('ma', 'Microsoft Accounts'),
-                        ('xbl', 'Xbox Live Accounts'))}]}
+            'choices': (('ma', 'Microsoft Accounts'))}]}
 
     MICROSOFT_AUTH_CONFIG_CLASS is the only microsoft_auth setting not present
     here. See bottom of file for more on it.
 """
 
 LOGIN_TYPE_MA = "ma"
-LOGIN_TYPE_XBL = "xbl"
 HOOK_SETTINGS = [
     "MICROSOFT_AUTH_AUTHENTICATE_HOOK",
     "MICROSOFT_AUTH_CALLBACK_HOOK",
@@ -101,14 +99,6 @@ DEFAULT_CONFIG = {
             ),
             bool,
         ),
-        "MICROSOFT_AUTH_XBL_SYNC_USERNAME": (
-            False,
-            _(
-                """Automatically sync the username from the Xbox Live
-                Gamertag?"""
-            ),
-            bool,
-        ),
         "MICROSOFT_AUTH_AUTO_REPLACE_ACCOUNTS": (
             False,
             _(
@@ -169,7 +159,6 @@ DEFAULT_CONFIG = {
             "MICROSOFT_AUTH_EXTRA_SCOPES",
             "MICROSOFT_AUTH_AUTO_CREATE",
             "MICROSOFT_AUTH_REGISTER_INACTIVE_ADMIN",
-            "MICROSOFT_AUTH_XBL_SYNC_USERNAME",
             "MICROSOFT_AUTH_AUTO_REPLACE_ACCOUNTS",
             "MICROSOFT_AUTH_AUTHENTICATE_HOOK",
             "MICROSOFT_AUTH_CALLBACK_HOOK",
@@ -182,7 +171,6 @@ DEFAULT_CONFIG = {
                 "widget": "django.forms.Select",
                 "choices": (
                     (LOGIN_TYPE_MA, "Microsoft Auth"),
-                    (LOGIN_TYPE_XBL, "Xbox Live"),
                 ),
             },
         ]
