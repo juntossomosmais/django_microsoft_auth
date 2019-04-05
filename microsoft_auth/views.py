@@ -19,11 +19,8 @@ logger = logging.getLogger("django")
 
 
 class AuthenticateCallbackView(View):
-    """ Authentication callback for Microsoft to call as part of OAuth2
-            implicit grant flow
-
-        For more details:
-        https://developer.microsoft.com/en-us/graph/docs/get-started/rest
+    """
+    Authentication callback for Microsoft to call as part of the OAuth2 authorization flow.
     """
 
     messages = {

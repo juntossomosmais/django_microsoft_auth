@@ -1,6 +1,8 @@
 import logging
+from datetime import datetime
 from typing import Dict
 
+import requests
 from django.contrib.sites.models import Site
 from django.core.signing import TimestampSigner
 from django.http.request import HttpRequest
@@ -52,3 +54,51 @@ def microsoft(request: HttpRequest) -> Dict:
         "microsoft_authorization_url": mark_safe(authorizarion_url),
         "microsoft_login_type_text": login_type,
     }
+
+
+def has_access_token_expired(ms_tokens_response: Dict):
+    access_token_expires_at = datetime.fromtimestamp(
+        ms_tokens_response.get("expires_at")
+    )
+    now = datetime.now()
+
+    print("Token expires at: %s" % (access_token_expires_at))
+    print("Now: %s" % now)
+
+    return now < access_token_expires_at
+
+
+def check_access_token_expired(request: HttpRequest):
+    ms_tokens_response = request.session.get("ms_tokens_response")
+
+    print("Verifying ms_tokens_response is available in the session...")
+
+    if ms_tokens_response:
+        print("Found microsoft tokens cookie from session...")
+
+        if has_access_token_expired(ms_tokens_response):
+            print("Token has expired... trying to refresh...")
+
+            azure_client = AzureOAuth2Session(request=request)
+            refreshed_ms_tokens_response = azure_client.refresh_token(
+                ms_tokens_response["refresh_token"]
+            )
+
+            # refresh was successful
+            if refreshed_ms_tokens_response:
+                request.session[
+                    "ms_tokens_response"
+                ] = refreshed_ms_tokens_response
+
+                print(refreshed_ms_tokens_response)
+
+            # no successful refresh, log the user again!
+            else:
+                print(
+                    "Refreshing the access token was not successful, removing from session..."
+                )
+                # del request.session["ms_tokens_response"]
+                for sesskey in request.session.keys():
+                    del request.session[sesskey]
+
+    return {}

@@ -166,6 +166,29 @@ class AzureOAuth2Session(OAuth2Session):
 
         return ms_tokens_response
 
+    def refresh_token(self, refresh_token, **kwargs):
+        """
+        Refreshes OAuth2 Tokens from Microsoft with given kwargs and assign to token property
+        after the user has given consent and clicked the authorization url.
+        """
+        extra_params = {"client_id": self.client_id}
+
+        try:
+            refreshed_ms_tokens = super().refresh_token(
+                self.openid_config["token_endpoint"],
+                refresh_token=refresh_token,
+                client_secret=self.config.MICROSOFT_AUTH_CLIENT_SECRET,  # application secret to get tokens from
+                **extra_params,  # authorization code is given as a keyword arg
+            )
+
+            raise RuntimeError("hu")
+        except BaseException as exception:
+            # an exception occured when refreshing... log the user again!
+            print(exception)
+            return None
+
+        return refreshed_ms_tokens
+
     def has_fetched_tokens_the_appropriate_scopes(self, scopes) -> bool:
         """
         Validates Microsoft's OAuth2 server token response scopes based on MICROSOFT_AUTH_LOGIN_TYPE.

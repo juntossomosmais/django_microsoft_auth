@@ -17,10 +17,9 @@ class AzureAuthenticationBackend(ModelBackend):
     Uses Microsoft's Graph OAuth and XBL servers to authentiate
     """
 
-    # config = None
     microsoft = None
 
-    def __init__(self, user=None):
+    def __init__(self):
         self._azure_client = None
 
     @property
@@ -47,7 +46,11 @@ class AzureAuthenticationBackend(ModelBackend):
         user = None
 
         # fetch OAuth2 access, refresh and id_token
+        # muast store on a session object!
         ms_tokens_response = self._azure_client.fetch_tokens(code=code)
+
+        # store session data
+        request.session["ms_tokens_response"] = ms_tokens_response
 
         # validate permission scopes
         if self._azure_client.has_fetched_tokens_the_appropriate_scopes(
@@ -75,13 +78,13 @@ class AzureAuthenticationBackend(ModelBackend):
 
         try:
             microsoft_user = MicrosoftAccount.objects.get(
-                microsoft_id=id_token_claims["sub"]
+                microsoft_id=id_token_claims["oid"]
             )
         except MicrosoftAccount.DoesNotExist:
             if self.config.MICROSOFT_AUTH_AUTO_CREATE:
                 # create new Microsoft Account
                 microsoft_user = MicrosoftAccount(
-                    microsoft_id=id_token_claims["sub"]
+                    microsoft_id=id_token_claims["oid"]
                 )
                 microsoft_user.save()
 
