@@ -37,18 +37,17 @@ class AzureAuthenticationBackend(ModelBackend):
     def azure_client(self, request):
         self._azure_client = AzureOAuth2Session(request=request)
 
-    def authenticate(self, request, oauth2_authorization_code):
+    def authenticate(self, request, code):
         """
         Authenticates the user against the Django backend
-        using Azure's OAuth2 Authorization flow.
+        using Azure's OAuth2 Authorization flow by using the
+        authorization code which contains the user acceptance.
         """
         self._azure_client = AzureOAuth2Session(request=request)
         user = None
 
         # fetch OAuth2 access, refresh and id_token
-        ms_tokens_response = self._azure_client.fetch_tokens(
-            code=oauth2_authorization_code
-        )
+        ms_tokens_response = self._azure_client.fetch_tokens(code=code)
 
         # validate permission scopes
         if self._azure_client.has_fetched_tokens_the_appropriate_scopes(

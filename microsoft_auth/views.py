@@ -126,8 +126,9 @@ class AuthenticateCallbackView(View):
             if code is None:
                 self.context["message"] = {"error": "missing_code"}
             else:
-                # authenticate user using Microsoft code
+                # authenticate user using Microsoft's authorization code
                 user = authenticate(self.request, code=code)
+
                 if user is None:
                     # this should not fail at this point except for network
                     # error while retrieving profile or database error
