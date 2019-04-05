@@ -18,7 +18,7 @@ GAMERTAG = "Some Gamertag"
 
 @override_settings(
     AUTHENTICATION_BACKENDS=[
-        "microsoft_auth.backends.MicrosoftAuthenticationBackend",
+        "microsoft_auth.backends.AzureAuthenticationBackend",
         "django.contrib.auth.backends.ModelBackend",
     ],
     MICROSOFT_AUTH_LOGIN_TYPE=LOGIN_TYPE_XBL,

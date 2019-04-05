@@ -13,7 +13,7 @@ from django.utils.translation import ugettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from .utils import get_scheme, get_hook
+from .utils import get_hook, get_scheme
 
 logger = logging.getLogger("django")
 
@@ -144,7 +144,6 @@ class AuthenticateCallbackView(View):
             to parent window with details of result """
 
         context = self.get_context_data(**request.POST.dict())
-
         status_code = 200
 
         if "error" in context["message"]:

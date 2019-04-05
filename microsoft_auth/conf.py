@@ -111,7 +111,7 @@ DEFAULT_CONFIG = {
             "",
             _(
                 """Callable hook to call after authenticating a user on the
-                `microsoft_auth.backends.MicrosoftAuthenticationBackend`.
+                `microsoft_auth.backends.AzureAuthenticationBackend`.
 
                 If the login type is Microsoft Auth, the parameters will be
                 `(User: user, oauthlib.oauth2.rfc6749.tokens.OAuth2Token:
@@ -169,9 +169,7 @@ DEFAULT_CONFIG = {
             "django.forms.fields.ChoiceField",
             {
                 "widget": "django.forms.Select",
-                "choices": (
-                    (LOGIN_TYPE_MA, "Microsoft Auth"),
-                ),
+                "choices": ((LOGIN_TYPE_MA, "Microsoft Auth"),),
             },
         ]
     },

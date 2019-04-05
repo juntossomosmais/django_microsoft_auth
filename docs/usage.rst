@@ -69,7 +69,7 @@ Quickstart
     ]
 
     AUTHENTICATION_BACKENDS = [
-        'microsoft_auth.backends.MicrosoftAuthenticationBackend',
+        'microsoft_auth.backends.AzureAuthenticationBackend',
         'django.contrib.auth.backends.ModelBackend' # if you also want to use Django's authentication
         # I recommend keeping this with at least one database superuser in case of unable to use others
     ]

@@ -84,7 +84,7 @@ if "LOAD_DEV_SETTINGS" in os.environ:
     ]
 
     AUTHENTICATION_BACKENDS = [
-        "microsoft_auth.backends.MicrosoftAuthenticationBackend",
+        "microsoft_auth.backends.AzureAuthenticationBackend",
         "django.contrib.auth.backends.ModelBackend",
     ]
 

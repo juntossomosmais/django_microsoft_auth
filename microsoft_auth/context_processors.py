@@ -1,19 +1,21 @@
 import logging
+from typing import Dict
 
 from django.contrib.sites.models import Site
 from django.core.signing import TimestampSigner
+from django.http.request import HttpRequest
 from django.middleware.csrf import get_token
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from .client import MicrosoftClient
+from .client import AzureOAuth2Session
 from .conf import config
 from .utils import get_scheme
 
 logger = logging.getLogger("django")
 
 
-def microsoft(request):
+def microsoft(request: HttpRequest) -> Dict:
     """ Adds global template variables for microsoft_auth """
     login_type = _("Microsoft")
 
@@ -40,10 +42,13 @@ def microsoft(request):
     # initialize Microsoft client using CSRF token as state variable
     signer = TimestampSigner()
     state = signer.sign(get_token(request))
-    microsoft = MicrosoftClient(state=state, request=request)
-    auth_url = microsoft.authorization_url()[0]
+
+    # Creates OAuth2Session based on the request to the admin page
+    microsoft = AzureOAuth2Session(state=state, request=request)
+    authorizarion_url = microsoft.authorization_url()[0]
+
     return {
         "microsoft_login_enabled": config.MICROSOFT_AUTH_LOGIN_ENABLED,
-        "microsoft_authorization_url": mark_safe(auth_url),
+        "microsoft_authorization_url": mark_safe(authorizarion_url),
         "microsoft_login_type_text": login_type,
     }

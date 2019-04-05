@@ -18,7 +18,7 @@ MISSING_ID = "some_missing_id"
 
 @override_settings(
     AUTHENTICATION_BACKENDS=[
-        "microsoft_auth.backends.MicrosoftAuthenticationBackend",
+        "microsoft_auth.backends.AzureAuthenticationBackend",
         "django.contrib.auth.backends.ModelBackend",
     ]
 )
