@@ -168,7 +168,7 @@ class AzureOAuth2Session(OAuth2Session):
 
     def refresh_token(self, refresh_token, **kwargs):
         """
-        Refreshes OAuth2 Tokens from Microsoft with given kwargs and assign to token property
+        Refreshes OAuth2 acess tokens from Microsoft with given kwargs and assign to token property
         after the user has given consent and clicked the authorization url.
         """
         extra_params = {"client_id": self.client_id}
@@ -178,13 +178,19 @@ class AzureOAuth2Session(OAuth2Session):
                 self.openid_config["token_endpoint"],
                 refresh_token=refresh_token,
                 client_secret=self.config.MICROSOFT_AUTH_CLIENT_SECRET,  # application secret to get tokens from
-                **extra_params,  # authorization code is given as a keyword arg
+                **extra_params,
             )
 
-            raise RuntimeError("hu")
+            # if the new access token remained the same (no update)
+            if (
+                refreshed_ms_tokens["access_token"]
+                == self.token["access_token"]
+            ):
+                print("nothing changed....")
+                return None
+
         except BaseException as exception:
             # an exception occured when refreshing... log the user again!
-            print(exception)
             return None
 
         return refreshed_ms_tokens

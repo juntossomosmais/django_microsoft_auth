@@ -65,7 +65,8 @@ def has_access_token_expired(ms_tokens_response: Dict):
     print("Token expires at: %s" % (access_token_expires_at))
     print("Now: %s" % now)
 
-    return now < access_token_expires_at
+    # to expire now must be bigger than the access_token_expiration!
+    return now > access_token_expires_at
 
 
 def check_access_token_expired(request: HttpRequest):
@@ -90,15 +91,19 @@ def check_access_token_expired(request: HttpRequest):
                     "ms_tokens_response"
                 ] = refreshed_ms_tokens_response
 
-                print(refreshed_ms_tokens_response)
+                print(
+                    "Successfully refreshed the access token... old tokens: %s, new tokens: %s"
+                    % (ms_tokens_response, refreshed_ms_tokens_response)
+                )
 
             # no successful refresh, log the user again!
             else:
                 print(
                     "Refreshing the access token was not successful, removing from session..."
                 )
-                # del request.session["ms_tokens_response"]
-                for sesskey in request.session.keys():
-                    del request.session[sesskey]
 
+                # the user must log in again
+                request.session.flush()
+
+    # do nothing, the user MUST log in again
     return {}
