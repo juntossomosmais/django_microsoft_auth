@@ -74,10 +74,10 @@ def add_azure_ad_roles(user_obj: User, ms_tokens_response: Dict):
     for missing_ad_role in set(user_ad_permissions) - set(
         previous_permissions
     ):
-        _add_missing_ad_role(missing_ad_role)
+        _add_missing_ad_role(user_obj, missing_ad_role)
 
     # removes roles that are local but not anymore on ad
     for excluded_ad_role in set(previous_permissions) - set(
         user_ad_permissions
     ):
-        _exclude_missing_ad_role(excluded_ad_role)
+        _exclude_missing_ad_role(user_obj, excluded_ad_role)
