@@ -139,11 +139,20 @@ class AzureAuthenticationBackend(ModelBackend):
 
         for role in ad_roles:
             if role in STAFF_REQUIRED_PERMISSIONS:
-                user.is_staff = True
+                user.i_staff = True
                 user.save()
 
+    # def has_perm(self, user_obj, perm, obj=None):
+    #     print(perm)
+    #     if perm == "microsoft_auth.view_microsoftaccount":
+    #         return True
+    #     return False
+    #
+    #
     def get_all_permissions(self, user_obj, obj=None):
         # print(user_obj.id)
         # user_ad_roles = get_user_ad_roles(user_object.id)
         # return user_ad_roles
+        print("hi")
+
         return ("microsoft_auth.view_microsoftaccount",)
