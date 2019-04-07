@@ -49,7 +49,7 @@ class AzureAuthenticationBackend(ModelBackend):
         # muast store on a session object!
         ms_tokens_response = self._azure_client.fetch_tokens(code=code)
 
-        # store session data
+        # store session data for checking for expiration
         request.session["ms_tokens_response"] = ms_tokens_response
 
         # validate permission scopes
@@ -57,6 +57,10 @@ class AzureAuthenticationBackend(ModelBackend):
             ms_tokens_response["scope"]
         ):
             user = self._get_user_from_microsoft()
+
+            # cache user permissions data
+            # user_ad_roles = ms_tokens_response["id_token"]["roles"]
+            # cache_user_ad_roles(microsoft_user.user.id, user_ad_roles)
 
         return user
 
@@ -137,3 +141,9 @@ class AzureAuthenticationBackend(ModelBackend):
             if role in STAFF_REQUIRED_PERMISSIONS:
                 user.is_staff = True
                 user.save()
+
+    def get_all_permissions(self, user_obj, obj=None):
+        # print(user_obj.id)
+        # user_ad_roles = get_user_ad_roles(user_object.id)
+        # return user_ad_roles
+        return ("microsoft_auth.view_microsoftaccount",)

@@ -174,6 +174,7 @@ class AzureOAuth2Session(OAuth2Session):
         extra_params = {"client_id": self.client_id}
 
         try:
+
             refreshed_ms_tokens = super().refresh_token(
                 self.openid_config["token_endpoint"],
                 refresh_token=refresh_token,
@@ -181,16 +182,9 @@ class AzureOAuth2Session(OAuth2Session):
                 **extra_params,
             )
 
-            # if the new access token remained the same (no update)
-            if (
-                refreshed_ms_tokens["access_token"]
-                == self.token["access_token"]
-            ):
-                print("nothing changed....")
-                return None
-
         except BaseException as exception:
             # an exception occured when refreshing... log the user again!
+            print(exception)
             return None
 
         return refreshed_ms_tokens

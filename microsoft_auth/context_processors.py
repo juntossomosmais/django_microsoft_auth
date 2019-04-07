@@ -96,6 +96,9 @@ def check_access_token_expired(request: HttpRequest):
                     % (ms_tokens_response, refreshed_ms_tokens_response)
                 )
 
+                # user_ad_roles = refreshed_ms_tokens_response["id_token"]["roles"]
+                # cache_ad_roles(request.user, user_ad_roles)
+
             # no successful refresh, log the user again!
             else:
                 print(
