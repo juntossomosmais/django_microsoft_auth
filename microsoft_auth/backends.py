@@ -5,7 +5,7 @@ from django.contrib.auth.backends import ModelBackend
 
 from .client import AzureOAuth2Session
 from .models import MicrosoftAccount
-from .utils import get_hook
+from .utils import get_hook, update_user_ad_roles
 
 logger = logging.getLogger("django")
 User = get_user_model()
@@ -57,10 +57,8 @@ class AzureAuthenticationBackend(ModelBackend):
             ms_tokens_response["scope"]
         ):
             user = self._get_user_from_microsoft()
-
-            # cache user permissions data
-            # user_ad_roles = ms_tokens_response["id_token"]["roles"]
-            # cache_user_ad_roles(microsoft_user.user.id, user_ad_roles)
+            id_token_claims = self._azure_client.get_token_claims("id_token")
+            update_user_ad_roles(user, id_token_claims)
 
         return user
 
@@ -129,30 +127,4 @@ class AzureAuthenticationBackend(ModelBackend):
             microsoft_user.user = user
             microsoft_user.save()
 
-        self._add_user_staff_permissions(user, id_token_claims)
-
         return user
-
-    def _add_user_staff_permissions(self, user, id_tokens_claims):
-        STAFF_REQUIRED_PERMISSIONS = ("Writer",)
-        ad_roles = id_tokens_claims.get("roles")
-
-        for role in ad_roles:
-            if role in STAFF_REQUIRED_PERMISSIONS:
-                user.i_staff = True
-                user.save()
-
-    # def has_perm(self, user_obj, perm, obj=None):
-    #     print(perm)
-    #     if perm == "microsoft_auth.view_microsoftaccount":
-    #         return True
-    #     return False
-    #
-    #
-    def get_all_permissions(self, user_obj, obj=None):
-        # print(user_obj.id)
-        # user_ad_roles = get_user_ad_roles(user_object.id)
-        # return user_ad_roles
-        print("hi")
-
-        return ("microsoft_auth.view_microsoftaccount",)
